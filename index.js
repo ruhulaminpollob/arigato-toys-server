@@ -52,6 +52,17 @@ async function run() {
             const result=await toysCollection.find().toArray();
             res.send(result);
         })
+        //get specific users toys
+
+        app.get('/mytoys', async(req,res)=>{
+            console.log(req.query);
+            let query ={}
+            if (req.query?.email) {
+                query={supplierEmail:req.query.email}
+            }
+            const result=await toysCollection.find(query).toArray()
+            res.send(result)
+        })
 
         // Add single Toys
         app.post('/toys', async(req,res)=>{
