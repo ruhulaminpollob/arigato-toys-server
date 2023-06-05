@@ -79,7 +79,7 @@ async function run() {
             res.send(result);
         })
 
-        //patch update toys
+        // update toys with put
         app.put('/toys/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
@@ -97,10 +97,16 @@ async function run() {
             }
             const result=await toysCollection.updateOne(filter, updateDoc,option)
 
-
             res.send(result)
         })
 
+        // delete toys ------------
+        app.delete('/toys/:id', async(req, res)=>{
+            const id=req.params.id;
+            const query={_id: new ObjectId(id)}
+            const result=await toysCollection.deleteOne(query);
+            res.send(result);
+        })
 
 
 
