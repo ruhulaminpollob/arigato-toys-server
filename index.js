@@ -40,42 +40,65 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
 
-        
+
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
         // Send a ping to confirm a successful connection
 
-        const toysCollection=client.db('toysDB').collection('toys')
+        const toysCollection = client.db('toysDB').collection('toys')
 
         // get all toys data from mongodb
-        app.get('/toys', async (req,res)=>{
-            const result=await toysCollection.find().toArray();
+        app.get('/toys', async (req, res) => {
+            const result = await toysCollection.find().toArray();
             res.send(result);
         })
         //get specific users toys
 
-        app.get('/mytoys', async(req,res)=>{
+        app.get('/mytoys', async (req, res) => {
             // console.log(req.query);
-            let query ={}
+            let query = {}
             if (req.query?.email) {
-                query={supplierEmail:req.query.email}
+                query = { supplierEmail: req.query.email }
             }
-            const result=await toysCollection.find(query).toArray()
+            const result = await toysCollection.find(query).toArray()
             res.send(result)
         })
         // get specific one toy
-        app.get('/toys/:id', async(req,res)=>{
-            const id=req.params.id;
-            const query={_id: new ObjectId(id)}
-            const result=await toysCollection.findOne(query)
+        app.get('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toysCollection.findOne(query)
+            res.send(result)
         })
 
         // Add single Toys
-        app.post('/toys', async(req,res)=>{
-            const newToys=req.body;
+        app.post('/toys', async (req, res) => {
+            const newToys = req.body;
             console.log(newToys);
-            const result=await toysCollection.insertOne(newToys);
+            const result = await toysCollection.insertOne(newToys);
             res.send(result);
+        })
+
+        //patch update toys
+        app.put('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const option = { upsert: true }
+            const updatedToys=req.body;
+            const updateDoc = {
+                $set: {
+                    name:updatedToys.name, 
+                    quantity:updatedToys.quantity, 
+                    category:updatedToys.category,
+                    price:updatedToys.price,
+                    description:updatedToys.description,
+                    photo:updatedToys.photo
+                }
+            }
+            const result=await toysCollection.updateOne(filter, updateDoc,option)
+
+
+            res.send(result)
         })
 
 
