@@ -47,6 +47,12 @@ async function run() {
 
         const toysCollection=client.db('toysDB').collection('toys')
 
+        // get all toys data from mongodb
+        app.get('/toys', async (req,res)=>{
+            const result=await toysCollection.find().toArray();
+            res.send(result);
+        })
+
         // Add single Toys
         app.post('/toys', async(req,res)=>{
             const newToys=req.body;
