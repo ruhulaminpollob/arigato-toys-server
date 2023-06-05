@@ -7,9 +7,13 @@ const port = process.env.PORT || 5000;
 
 
 // middleware
-app.use(cors());
+const corsOptions = {
+    origin: '*',
+    credentials: true,
+    optionSuccessStatus: 200,
+}
 app.use(express.json());
-
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.send('Arigatou Toy Is Running');
@@ -18,7 +22,7 @@ app.get('/', (req, res) => {
 
 // mongodb 
 
-console.log(process.env.DB_PASS);
+// console.log(process.env.DB_PASS);
 
 
 
@@ -35,9 +39,25 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
+
+        
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         // Send a ping to confirm a successful connection
+
+        const toysCollection=client.db('toysDB').collection('toys')
+
+        // Add single Toys
+        app.post('/toys', async(req,res)=>{
+            const newToys=req.body;
+            console.log(newToys);
+            const result=await toysCollection.insertOne(newToys);
+            res.send(result);
+        })
+
+
+
+
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
