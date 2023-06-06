@@ -52,6 +52,15 @@ async function run() {
             const result = await toysCollection.find().toArray();
             res.send(result);
         })
+
+        // // get specific one toy by id
+        app.get('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toysCollection.findOne(query)
+            res.send(result)
+          })
+
         //get specific users toys
 
         app.get('/mytoys', async (req, res) => {
@@ -63,13 +72,17 @@ async function run() {
             const result = await toysCollection.find(query).toArray()
             res.send(result)
         })
-        // get specific one toy
-        app.get('/toys/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) }
-            const result = await toysCollection.findOne(query)
+        //get specific category array of toys data
+        app.get('/category/:category', async(req,res)=>{
+            // console.log(req.params.category);
+            let query ={};
+            query={category:req.params.category}
+            const result=await toysCollection.find(query).toArray()
             res.send(result)
+            
         })
+
+        
 
         // Add single Toys
         app.post('/toys', async (req, res) => {
